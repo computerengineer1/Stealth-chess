@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Chess Helper Client",
+  "version": "1.0.0",
+  "description": "Stealth auxiliary interface for Chess Helper.",
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.chess.com/*",
+    "*://*.lichess.org/*",
+    "http://127.0.0.1:5005/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.chess.com/*", "*://*.lichess.org/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

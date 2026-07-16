@@ -1,0 +1,82 @@
+name: Build iOS IPA (Unsigned)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:  # ← Manual trigger button from GitHub UI
+
+jobs:
+  build:
+    runs-on: macos-14  # Apple Silicon M1 runner (faster)
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: mobile_app/package-lock.json
+
+    - name: Install npm dependencies
+      working-directory: mobile_app
+      run: npm install
+
+    - name: Sync Capacitor iOS
+      working-directory: mobile_app
+      run: npx cap sync ios
+
+    # Re-apply stealth InAppBrowser patch (cap sync may overwrite native files)
+    - name: Apply Stealth InAppBrowser Patch
+      working-directory: mobile_app
+      run: node patch_inappbrowser.js
+
+    - name: Install CocoaPods
+      working-directory: mobile_app/ios/App
+      run: pod install
+
+    - name: Build Xcode Project (Unsigned)
+      working-directory: mobile_app/ios/App
+      run: |
+        xcodebuild \
+          -workspace App.xcworkspace \
+          -scheme App \
+          -configuration Release \
+          -sdk iphoneos \
+          -derivedDataPath build \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          DEVELOPMENT_TEAM="" \
+          clean build 2>&1 | tail -60
+
+    - name: Package IPA
+      working-directory: mobile_app/ios/App
+      run: |
+        APP_PATH=$(find build -name "App.app" -type d | grep "Release-iphoneos" | head -1)
+        if [ -z "$APP_PATH" ]; then
+          echo "[-] Error: App.app not found!"
+          find build -name "*.app" -type d
+          exit 1
+        fi
+        echo "[+] Found App.app at: $APP_PATH"
+        
+        mkdir -p ipa_output/Payload
+        cp -r "$APP_PATH" ipa_output/Payload/
+        cd ipa_output
+        zip -r ../StealthChessHelper.ipa Payload/
+        
+        echo "============================================"
+        echo "✅ IPA created successfully!"
+        ls -lh ../StealthChessHelper.ipa
+        echo "============================================"
+
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: StealthChessHelper-Unsigned-IPA
+        path: mobile_app/ios/App/StealthChessHelper.ipa
+        retention-days: 90

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.stealth.chessassistant" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Stealth Chess Helper</name>
+    <description>
+        Stealth Chess Assistant for mobile devices.
+    </description>
+    <author email="support@stealthchess.com" href="https://stealthchess.com">
+        Stealth Chess Helper Developer
+    </author>
+    
+    <content src="index.html" />
+    
+    <!-- Access Control & Permissions -->
+    <access origin="*" />
+    <allow-navigation href="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    
+    <!-- iOS Specific Configuration -->
+    <platform name="ios">
+        <!-- Force modern WKWebView for best Javascript performance -->
+        <preference name="WKWebViewOnly" value="true" />
+        
+        <!-- Allow embedded media and scripts to execute flawlessly -->
+        <preference name="AllowInlineMediaPlayback" value="true" />
+        <preference name="BackupWebStorage" value="none" />
+        
+        <!-- Style the status bar to match the dark volcanic theme -->
+        <preference name="StatusBarOverlaysWebView" value="true" />
+        <preference name="StatusBarStyle" value="lightcontent" />
+        
+        <!-- App Icon -->
+        <icon src="logo.png" />
+    </platform>
+    
+    <!-- Required Plugins -->
+    <plugin name="cordova-plugin-inappbrowser" spec="^6.0.0" />
+</widget>

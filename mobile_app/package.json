@@ -1,0 +1,19 @@
+{
+  "name": "stealth-chess-helper",
+  "version": "1.0.0",
+  "description": "Stealth Chess Assistant for mobile devices.",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node patch_inappbrowser.js",
+    "build": "echo \"Ready for Capacitor packaging\""
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "cordova-plugin-inappbrowser": "^6.0.0"
+  },
+  "author": "Stealth Chess Helper Developer",
+  "license": "ISC"
+}

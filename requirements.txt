@@ -1,0 +1,8 @@
+mss
+opencv-python
+numpy
+python-chess
+PyQt6
+keyboard
+discord.py
+requests

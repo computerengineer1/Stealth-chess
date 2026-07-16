@@ -1,0 +1,25 @@
+# Ignore heavy desktop engine and compiled files
+stockfish-windows-x86-64-avx2.exe
+*.exe
+*.ico
+
+# Ignore Nuitka and Capacitor build outputs
+build_output/
+build/
+dist/
+mobile_app/ios/App/build/
+mobile_app/ios/App/Pods/
+
+# Ignore Package Manager directories
+node_modules/
+mobile_app/node_modules/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore local keys or configs
+*.key
+openrouter_proxy.py
+start_proxy.bat
+dev_tools/bot_config.py

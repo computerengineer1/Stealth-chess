@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stealth Chess Bot - المتجر الرسمي</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <header>
+        <div class="logo">
+            <span class="logo-icon">♟️</span>
+            <span class="logo-text">STEALTH CHESS</span>
+        </div>
+        <nav>
+            <a href="#features">الميزات</a>
+            <a href="#pricing">الباقات</a>
+            <a href="#checkout" class="btn-primary-sm">اشترِ الآن</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <span class="badge">الإصدار v1.2.0 المستقر</span>
+                <h1>العب بذكاء خارق <br><span class="gradient-text">دون أن يكشفك أحد</span></h1>
+                <p>بوت الشطرنج الأكثر تخفياً في العالم للكمبيوتر والآيفون. أسهم مساعدة مرئية لك فقط، ومخفية تماماً عن تسجيل الشاشة وبث الديسكورد.</p>
+                <div class="hero-actions">
+                    <a href="#pricing" class="btn-primary">استعرض الباقات ⚡</a>
+                    <a href="#features" class="btn-secondary">كيف يعمل؟ 🔍</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="chess-card-3d" id="mainCard">
+                    <div class="card-glow"></div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <span class="chip">Stealth Engine Active</span>
+                            <span class="status-dot"></span>
+                        </div>
+                        <div class="chess-animation">
+                            <div class="piece king">♚</div>
+                            <div class="arrow-3d"></div>
+                            <div class="piece knight">♞</div>
+                        </div>
+                        <h3>خوارزمية مانع الباند البشري</h3>
+                        <p>تأخير عشوائي ذكي واقتراح نقلات بديلة لمحاكاة اللعب البشري الطبيعي.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing">
+            <h2 class="section-title">اختر باقتك وابدأ الفوز فوراً</h2>
+            <div class="pricing-grid">
+                <!-- Monthly Plan -->
+                <div class="price-card" onclick="openCheckout('Monthly', 15)">
+                    <div class="price-header">
+                        <h3>الاشتراك الشهري</h3>
+                        <div class="price">$15<span>/ شهرياً</span></div>
+                    </div>
+                    <ul class="features-list">
+                        <li>✅ الوصول الكامل لنسخة الكمبيوتر (EXE)</li>
+                        <li>✅ الوصول الكامل لنسخة الآيفون (iOS)</li>
+                        <li>✅ تفعيل ميزة التخفي عن البث والتسجيل</li>
+                        <li>✅ تحديثات مجانية طوال فترة الاشتراك</li>
+                        <li>🔒 قفل جهاز واحد للكمبيوتر + هاتف</li>
+                    </ul>
+                    <button class="btn-card-buy">اختر الباقة الشهري</button>
+                </div>
+
+                <!-- Lifetime Plan -->
+                <div class="price-card popular" onclick="openCheckout('Lifetime', 85)">
+                    <div class="ribbon">الأكثر طلباً 🔥</div>
+                    <div class="price-header">
+                        <h3>اشتراك مدى الحياة</h3>
+                        <div class="price">$85<span>/ دفعة واحدة</span></div>
+                    </div>
+                    <ul class="features-list">
+                        <li>✅ وصول أبدي لجميع التحديثات المستقبلية</li>
+                        <li>✅ نسخة الكمبيوتر + نسخة الآيفون</li>
+                        <li>✅ أولوية الدعم الفني VIP في ديسكورد</li>
+                        <li>✅ دعم كامل للعب التلقائي الذكي القادم</li>
+                        <li>🔒 قفل جهازين للكمبيوتر + هاتف</li>
+                    </ul>
+                    <button class="btn-card-buy-popular">امتلك مدى الحياة الآن</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checkout Section -->
+        <section id="checkout" class="checkout-section hidden">
+            <div class="checkout-container">
+                <div class="checkout-form">
+                    <h2>بوابة الدفع الآمنة</h2>
+                    <p class="plan-summary">الباقة المختارة: <span id="selectedPlanName">Monthly</span> - <span id="selectedPlanPrice">$15</span></p>
+                    
+                    <form id="paymentForm" onsubmit="processPayment(event)">
+                        <div class="input-group">
+                            <label>الاسم الكامل على البطاقة</label>
+                            <input type="text" id="cardName" required placeholder="John Doe">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>رقم بطاقة الائتمان (Visa / Mastercard)</label>
+                            <input type="text" id="cardNumber" maxlength="19" required placeholder="xxxx xxxx xxxx xxxx" oninput="formatCardNumber(this)">
+                        </div>
+
+                        <div class="row">
+                            <div class="input-group half">
+                                <label>تاريخ الانتهاء</label>
+                                <input type="text" id="cardExpiry" maxlength="5" required placeholder="MM/YY" oninput="formatExpiry(this)">
+                            </div>
+                            <div class="input-group half">
+                                <label>الرمز السري (CVV)</label>
+                                <input type="text" id="cardCvv" maxlength="3" required placeholder="***" onfocus="flipCreditCard(true)" onblur="flipCreditCard(false)">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>رمز جهازك (Machine ID / Device ID)</label>
+                            <input type="text" id="deviceId" required placeholder="MOB-xxxx-xxxx-xxxx أو رمز الكمبيوتر">
+                            <span class="helper-text">ستقوم خوارزمية البوت بقفل ترخيصك على هذا الجهاز لحمايته.</span>
+                        </div>
+
+                        <button type="submit" class="btn-pay" id="payButton">تأكيد الدفع والتفعيل الفوري 🔒</button>
+                    </form>
+                </div>
+
+                <!-- 3D Credit Card Preview Container -->
+                <div class="card-preview-container">
+                    <div class="credit-card-3d" id="creditCard">
+                        <!-- Front Face -->
+                        <div class="card-face card-front">
+                            <div class="card-chip"></div>
+                            <div class="card-logo">VISA</div>
+                            <div class="card-number-display" id="displayCardNumber">•••• •••• •••• ••••</div>
+                            <div class="card-holder-info">
+                                <div class="card-label">حامل البطاقة</div>
+                                <div class="card-value" id="displayName">YOUR NAME</div>
+                            </div>
+                            <div class="card-expiry-info">
+                                <div class="card-label">ينتهي في</div>
+                                <div class="card-value" id="displayExpiry">MM/YY</div>
+                            </div>
+                        </div>
+                        <!-- Back Face -->
+                        <div class="card-face card-back">
+                            <div class="magnetic-strip"></div>
+                            <div class="signature-bar">
+                                <span class="cvv-display" id="displayCvv">***</span>
+                            </div>
+                            <div class="card-back-text">المعاملة مشفرة وآمنة 100% بنظام SSL</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activation Success Modal -->
+        <div id="successModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="success-icon">🎉</span>
+                <h2>تم الدفع والتفعيل بنجاح!</h2>
+                <p>لقد قمنا بتوليد مفتاح ترخيص مقفل على جهازك وتحديث السيرفر تلقائياً.</p>
+                <div class="license-box">
+                    <div class="license-label">مفتاح ترخيصك الحصري:</div>
+                    <div class="license-key" id="generatedKeyDisplay">MON-xxxx-xxxx-xxxx</div>
+                    <button class="btn-copy" onclick="copyLicenseKey()">نسخ المفتاح 📋</button>
+                </div>
+                <p class="modal-note">تم إرسال نسخة من المفتاح إلى قاعدة بيانات الديسكورد والآيفون. استمتع باللعب!</p>
+                <button class="btn-close" onclick="closeSuccessModal()">إغلاق</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Stealth Chess Bot. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

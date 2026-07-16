@@ -1,0 +1,144 @@
+(function() {
+    // 🛡️ Stealth DOM Reader Bypass (Anti-Cheat Invisible)
+    // Creates an isolated iframe to grab unhooked, native browser functions.
+    // This bypasses Chess.com's overrides on fetch() and setTimeout() which flag accounts.
+    const frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.src = 'about:blank'; // Fixes "Quirks Mode" warning
+    document.documentElement.appendChild(frame);
+    
+    // Grab unhooked native functions from the clean iframe
+    const nativeFetch = frame.contentWindow.fetch;
+    const nativeSetTimeout = frame.contentWindow.setTimeout;
+    
+    // Caching state to minimize reflows and HTTP spam
+    let cached_is_white_bottom = null;
+    let framesSinceOrientationCheck = 0;
+    let lastSentMatrixStr = "";
+    let lastSentIsWhiteBottom = null;
+    let lastSentTimeLeft = null;
+    
+    function readBoard() {
+        let boardArray = Array(8).fill("").map(() => Array(8).fill(""));
+        let pieces = document.querySelectorAll('.piece');
+        if (!pieces.length) {
+            // If no pieces, schedule next check and exit
+            let bulletSpeedDelay = Math.floor(Math.random() * 20) + 70;
+            nativeSetTimeout(readBoard, bulletSpeedDelay);
+            return;
+        }
+        
+        let is_white_bottom = true;
+        
+        // Cache board orientation and only check every 30 iterations (~2.5s) to avoid getBoundingClientRect layout reflows
+        if (cached_is_white_bottom !== null && framesSinceOrientationCheck < 30) {
+            is_white_bottom = cached_is_white_bottom;
+            framesSinceOrientationCheck++;
+        } else {
+            framesSinceOrientationCheck = 0;
+            let anchorPiece = Array.from(pieces).find(p => {
+                let sqClass = Array.from(p.classList).find(c => c.startsWith('square-'));
+                if (sqClass) {
+                    let rank = parseInt(sqClass[8]);
+                    return rank <= 2 || rank >= 7; 
+                }
+                return false;
+            });
+
+            if (anchorPiece) {
+                let sqClass = Array.from(anchorPiece.classList).find(c => c.startsWith('square-'));
+                let rank = parseInt(sqClass[8]);
+                let rect = anchorPiece.getBoundingClientRect();
+                let board = anchorPiece.parentElement.getBoundingClientRect();
+                let relativeY = (rect.top - board.top) / board.height;
+                let expectedY_WhiteBottom = (8 - rank) / 8;
+                let expectedY_BlackBottom = (rank - 1) / 8;
+                is_white_bottom = Math.abs(relativeY - expectedY_WhiteBottom) < Math.abs(relativeY - expectedY_BlackBottom);
+                cached_is_white_bottom = is_white_bottom;
+            } else if (cached_is_white_bottom !== null) {
+                is_white_bottom = cached_is_white_bottom;
+            }
+        }
+
+        pieces.forEach(p => {
+            let classes = p.className.split(' ');
+            let colorType = classes.find(c => c.length === 2 && (c[0]==='w' || c[0]==='b') && ['p', 'n', 'b', 'r', 'q', 'k'].includes(c[1].toLowerCase()));
+            let sqClass = classes.find(c => c.startsWith('square-'));
+            if (colorType && sqClass) {
+                let file = parseInt(sqClass[7]);
+                let rank = parseInt(sqClass[8]);
+                let r = 8 - rank;
+                let c = file - 1;
+                let char = colorType[1];
+                if (colorType[0] === 'w') char = char.toUpperCase();
+                boardArray[r][c] = char;
+            }
+        });
+        
+        // Parse remaining time from bottom (player's) clock
+        let timeLeft = 300; 
+        let clockEl = document.querySelector('.clock-bottom .clock-time-monospace, .clock-bottom span, .clock-bottom');
+        if (!clockEl) {
+            let clocks = document.querySelectorAll('.clock-component');
+            if (clocks.length > 0) {
+                clockEl = clocks[clocks.length - 1];
+            }
+        }
+        if (clockEl) {
+            let timeText = clockEl.textContent.trim();
+            if (timeText) {
+                let parts = timeText.split(':');
+                if (parts.length === 2) {
+                    let min = parseInt(parts[0], 10);
+                    let sec = parseFloat(parts[1]);
+                    if (!isNaN(min) && !isNaN(sec)) timeLeft = min * 60 + sec;
+                } else if (parts.length === 3) {
+                    let hr = parseInt(parts[0], 10);
+                    let min = parseInt(parts[1], 10);
+                    let sec = parseFloat(parts[2]);
+                    if (!isNaN(hr) && !isNaN(min) && !isNaN(sec)) timeLeft = hr * 3600 + min * 60 + sec;
+                } else {
+                    let sec = parseFloat(timeText);
+                    if (!isNaN(sec)) timeLeft = sec;
+                }
+            }
+        }
+
+        // Throttle POST requests to python backend
+        let matrixStr = JSON.stringify(boardArray);
+        let timeDifference = lastSentTimeLeft !== null ? Math.abs(timeLeft - lastSentTimeLeft) : 999;
+        
+        let shouldSend = (matrixStr !== lastSentMatrixStr) || 
+                         (is_white_bottom !== lastSentIsWhiteBottom) || 
+                         (timeDifference >= 1.0);
+                         
+        if (shouldSend) {
+            lastSentMatrixStr = matrixStr;
+            lastSentIsWhiteBottom = is_white_bottom;
+            lastSentTimeLeft = timeLeft;
+            
+            // Use native fetch to bypass page hooks
+            nativeFetch("http://127.0.0.1:5005", {
+                method: "POST",
+                mode: "cors",
+                credentials: "omit",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    matrix: boardArray, 
+                    is_white_bottom: is_white_bottom,
+                    time_left: timeLeft 
+                })
+            }).catch(e => {});
+        }
+        
+        // Loop recursively using native setTimeout
+        // Balanced speed (70-90ms) - Ultra-responsive but doesn't stutter the game process.
+        let bulletSpeedDelay = Math.floor(Math.random() * 20) + 70;
+        nativeSetTimeout(readBoard, bulletSpeedDelay);
+    }
+    
+    readBoard();
+})();
+

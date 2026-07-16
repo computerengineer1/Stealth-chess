@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' blob: data: gap:; connect-src * 'self' https:; script-src * 'self' 'unsafe-inline' 'unsafe-eval' blob:;">
+    <title>Stealth Chess Assistant</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Obsidian Volcanic Watermark Background -->
+    <div class="watermark-bg"></div>
+
+    <!-- Beautiful Intro Splash Screen -->
+    <div id="splash-screen" class="splash-container">
+        <div class="splash-content">
+            <div class="splash-logo-wrapper">
+                <img src="logo.png" class="splash-logo" alt="Logo">
+            </div>
+            <h1 class="splash-title">STEALTH ASSISTANT</h1>
+            <p class="splash-subtitle">PREMIUM CHESS COMPANION</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- ================= VIEW 1: ACTIVATION SCREEN ================= -->
+        <div id="activation-view" class="view-card">
+            <div class="header-section">
+                <div class="logo-container">
+                    <img src="logo.png" class="circular-logo" alt="Logo">
+                </div>
+                <h1 class="glow-title">STEALTH CHESS HELPER</h1>
+                <p class="subtitle">Subscription Activation Console</p>
+                <p class="subtitle-ar">تفعيل الاشتراك</p>
+            </div>
+
+            <div class="form-card" style="margin-bottom: 12px; text-align: center;">
+                <label class="input-label">
+                    <span>📱 Your Device ID (رمز جهازك)</span>
+                    <span class="ar-label">أرسل هذا الرمز للبائع لتفعيل مفتاحك</span>
+                </label>
+                <div id="device-id-display" style="
+                    background: rgba(255,255,255,0.05);
+                    border: 1px solid rgba(255,165,0,0.4);
+                    border-radius: 8px;
+                    padding: 10px 14px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 16px;
+                    letter-spacing: 2px;
+                    color: #ffa500;
+                    user-select: all;
+                    cursor: pointer;
+                ">Loading...</div>
+                <div style="font-size: 11px; color: #888; margin-top: 6px;">Tap to copy | اضغط للنسخ</div>
+            </div>
+
+            <div class="form-card">
+                <label class="input-label">
+                    <span>Enter License Key</span>
+                    <span class="ar-label">أدخل مفتاح الترخيص الخاص بك</span>
+                </label>
+                <input type="text" id="license-key-input" placeholder="Paste your activation key here (MON-... or LIF-...)" autocomplete="off">
+                
+                <div id="activation-status" class="status-msg"></div>
+
+                <button id="activate-btn" class="primary-btn">
+                    <span>Verify &amp; Activate</span>
+                    <span class="btn-ar">تفعيل وتأكيد المفتاح</span>
+                </button>
+            </div>
+
+            <div class="plans-group">
+                <div class="plans-title">Available Subscription Plans | باقات الاشتراك المتوفرة</div>
+                <div class="plan-item">⭐ Monthly Plan (اشتراك شهري): $10 - $15</div>
+                <div class="plan-item">⭐ 3-Month Plan (اشتراك 3 أشهر): $25 - $30</div>
+                <div class="plan-item highlight">⭐ Lifetime Plan (اشتراك مدى الحياة): $70 - $90</div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: MAIN DASHBOARD SCREEN ================= -->
+        <div id="dashboard-view" class="view-card hidden">
+            <!-- Top Subscription Banner -->
+            <div class="banner-card">
+                <div class="banner-left">
+                    <img src="logo.png" class="mini-logo" alt="Mini Logo">
+                    <div class="license-info">
+                        <div id="lbl-license-status" class="status-active">🟢 Subscription Active</div>
+                        <div id="lbl-expiry" class="expiry-text">Expiration: Never</div>
+                    </div>
+                </div>
+                <button id="change-key-btn" class="danger-btn">
+                    <span>Change Key</span>
+                    <span class="btn-ar-mini">تغيير</span>
+                </button>
+            </div>
+
+            <!-- Configuration Controls -->
+            <div class="config-group">
+                <div class="config-header">Helper Configuration | إعدادات التحكم</div>
+                
+                <!-- Game Mode -->
+                <div class="form-row">
+                    <div class="form-label-col">
+                        <span class="config-label">Game Mode</span>
+                        <span class="config-label-ar">نمط اللعب</span>
+                    </div>
+                    <select id="select-game-mode" class="custom-select">
+                        <option value="bullet">Bullet</option>
+                        <option value="blitz" selected>Blitz</option>
+                        <option value="rapid">Rapid</option>
+                    </select>
+                </div>
+
+                <!-- Engine Depth -->
+                <div class="form-row vertical">
+                    <div class="slider-header">
+                        <span class="config-label">Engine Depth / عمق المحرك</span>
+                        <span id="val-depth" class="badge-val">10</span>
+                    </div>
+                    <input type="range" id="slider-depth" min="5" max="20" value="10" class="custom-slider">
+                </div>
+
+                <!-- Skill Level -->
+                <div class="form-row vertical">
+                    <div class="slider-header">
+                        <span class="config-label">Skill Level / مستوى المهارة</span>
+                        <span id="val-skill" class="badge-val">15</span>
+                    </div>
+                    <input type="range" id="slider-skill" min="1" max="20" value="15" class="custom-slider">
+                </div>
+
+                <!-- Estimated ELO -->
+                <div class="form-row">
+                    <div class="form-label-col">
+                        <span class="config-label">Estimated ELO</span>
+                        <span class="config-label-ar">التصنيف المتوقع</span>
+                    </div>
+                    <span id="val-elo" class="elo-badge">~2000 ELO</span>
+                </div>
+
+                <!-- Anti-Ban Checkbox -->
+                <div class="form-row checkbox-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chk-antiban" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Occasionally suggest secondary move (Anti-Ban)<br>
+                            <span class="text-ar-desc">اقتراح نقلات ثانوية أحياناً لمنع كشف الحساب</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Show Arrows Checkbox -->
+                <div class="form-row checkbox-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chk-show-arrows" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Render board arrows overlay<br>
+                            <span class="text-ar-desc">عرض أسهم التوجيه على الرقعة</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Show HUD Checkbox -->
+                <div class="form-row checkbox-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chk-show-hud" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Render in-game HUD panel<br>
+                            <span class="text-ar-desc">عرض لوحة المعلومات أثناء اللعب</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Stealth Screen Checkbox -->
+                <div class="form-row checkbox-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chk-stealth-screen" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Stealth Screen (Hide from recordings/streams)<br>
+                            <span class="text-ar-desc">العرض المخفي (إخفاء من التصوير والبث)</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Threads -->
+                <div class="form-row">
+                    <div class="form-label-col">
+                        <span class="config-label">Engine Threads</span>
+                        <span class="config-label-ar">عدد الأنوية</span>
+                    </div>
+                    <div class="spinner-control">
+                        <button id="btn-spin-down" class="spin-btn">-</button>
+                        <input type="number" id="input-threads" min="1" max="16" value="2" readonly>
+                        <button id="btn-spin-up" class="spin-btn">+</button>
+                    </div>
+                </div>
+
+                <!-- Fullscreen Mode Checkbox -->
+                <div class="form-row checkbox-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chk-fullscreen" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Fullscreen game mode (hide toolbar)<br>
+                            <span class="text-ar-desc">وضع الشاشة الكاملة (إخفاء شريط الأدوات)</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Live Status Logs Console -->
+            <div class="config-group" style="margin-top: 5px; margin-bottom: 15px;">
+                <div class="config-header">Live Engine Logs | سجلات المحرك المباشرة</div>
+                <div id="live-logs-console" style="height: 110px; overflow-y: auto; background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,51,51,0.15); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #a0aec0; line-height: 1.4; display: flex; flex-direction: column; gap: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
+                    <div style="color: #2ecc71;">🟢 System ready. Waiting for bot start...</div>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <button id="start-bot-btn" class="start-btn">
+                <span>Start Assistant Bot</span>
+                <span class="btn-ar">بدء بوت المساعد الذكي</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Capacitor Bridge Connection -->
+    <script src="capacitor.js"></script>
+    <script src="injected.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

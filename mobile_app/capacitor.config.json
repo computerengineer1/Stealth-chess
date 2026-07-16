@@ -1,0 +1,11 @@
+{
+  "appId": "com.stealth.chessassistant",
+  "appName": "Stealth Chess Helper",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
